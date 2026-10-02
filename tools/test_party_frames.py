@@ -13,6 +13,7 @@ def main():
     parser.add_argument("--data", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
+    args.output = args.output.resolve()
     args.output.mkdir(parents=True, exist_ok=True)
     runner, data = args.runner.resolve(), args.data.resolve()
     if not (data / "interface" / "FrameXML" / "PartyMemberFrame.lua").is_file():

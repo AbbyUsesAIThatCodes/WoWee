@@ -64,7 +64,7 @@ def main():
     dirty = bool(git("status", "--porcelain", "--untracked-files=normal"))
     # All tracked inputs, plus submodule revisions; generated output is excluded.
     digest = hashlib.sha256()
-    for name in git("ls-files").splitlines():
+    for name in git("ls-files", "--cached", "--others", "--exclude-standard").splitlines():
         path = ROOT / name
         digest.update(name.encode())
         if path.is_file():
