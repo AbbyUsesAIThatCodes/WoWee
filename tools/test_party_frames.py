@@ -12,10 +12,17 @@ def main():
     parser.add_argument("--runner", type=Path, required=True)
     parser.add_argument("--data", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--manifest", type=Path,
+                        help="Reject a stale runner that does not contain this build identity")
     args = parser.parse_args()
     args.output = args.output.resolve()
     args.output.mkdir(parents=True, exist_ok=True)
     runner, data = args.runner.resolve(), args.data.resolve()
+    if args.manifest:
+        identity = json.loads(args.manifest.read_text())["identity"]
+        if identity.encode() not in runner.read_bytes():
+            parser.error("Runner does not match the requested build manifest; wait for linking")
+        print("Testing build: " + identity)
     if not (data / "interface" / "FrameXML" / "PartyMemberFrame.lua").is_file():
         parser.error("--data must contain extracted WotLK interface/FrameXML/PartyMemberFrame.lua")
     results = []

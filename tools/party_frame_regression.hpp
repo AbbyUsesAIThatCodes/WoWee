@@ -49,12 +49,27 @@ inline bool runPartyFrameRegression(wowee::addons::AddonManager& mgr,
         member.name = "Companion" + std::to_string(i);
         member.isOnline = i == 4 ? 0 : 1;
         member.onlineStatus = member.isOnline;
-        member.curHealth = 100 * i;
-        member.maxHealth = 1000;
         member.level = 80;
         roster.members.push_back(member);
     }
     changed();
+    ok &= check("roster identity before any stats packet", R"LUA(
+        for i=1,4 do
+            local unit = 'party'..i
+            assert(GetPartyMember(i) and UnitExists(unit), 'roster missing '..unit)
+            assert(UnitName(unit) == 'Companion'..i)
+            assert(_G['PartyMemberFrame'..i]:IsVisible())
+            assert(_G['PartyMemberFrame'..i..'Name']:GetText() == 'Companion'..i)
+            assert(UnitHealth(unit) == 0 and UnitHealthMax(unit) == 0)
+        end
+    )LUA");
+    for (int i = 1; i <= 4; ++i) {
+        auto& m = roster.members[static_cast<size_t>(i - 1)];
+        m.hasPartyStats = true;
+        m.curHealth = 100 * i;
+        m.maxHealth = 1000;
+        mgr.fireEvent("UNIT_HEALTH", {"party" + std::to_string(i)});
+    }
     ok &= check("four members, including offline and outside entity range", R"LUA(
         assert(GetNumPartyMembers() == 4)
         for i=1,4 do
@@ -65,7 +80,9 @@ inline bool runPartyFrameRegression(wowee::addons::AddonManager& mgr,
             assert(UnitName(unit) == 'Companion'..i)
             assert(UnitHealth(unit) == 100*i and UnitHealthMax(unit) == 1000)
             assert(_G[frame:GetName()..'Name']:GetText() == 'Companion'..i)
-            assert(_G[frame:GetName()..'HealthBar']:GetValue() == 100*i)
+            -- Offline bars are deliberately full and grey in WotLK FrameXML.
+            local shownHealth = i == 4 and 1000 or 100*i
+            assert(_G[frame:GetName()..'HealthBar']:GetValue() == shownHealth)
         end
         assert(not UnitIsConnected('party4'))
         for _,i in ipairs({-1,0,5,40,1.5}) do assert(not GetPartyMember(i)) end
@@ -117,6 +134,7 @@ inline bool runPartyFrameRegression(wowee::addons::AddonManager& mgr,
     joined.onlineStatus = 1;
     joined.curHealth = 550;
     joined.maxHealth = 900;
+    joined.hasPartyStats = true;
     roster.members.push_back(joined);
     changed();
     ok &= check("join refills and shows the fourth slot", R"LUA(

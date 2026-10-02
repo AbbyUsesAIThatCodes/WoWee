@@ -5,7 +5,7 @@
 Build `framexml_run` with `-DWOWEE_BUILD_FRAMEXML_RUN=ON`, then run:
 
 ```text
-python tools/test_party_frames.py --runner <build>/bin/framexml_run.exe --data <extracted-WotLK-directory> --output <results-directory>
+python tools/test_party_frames.py --runner <build>/bin/framexml_run.exe --data <extracted-WotLK-directory> --output <results-directory> --manifest <metadata>/build-manifest.json
 ```
 
 The data directory must contain the legally obtained, locally extracted
@@ -16,6 +16,8 @@ fallback API globals both enabled and disabled. It never opens a socket or logs
 in. Assertions cover membership, visible frames, name labels, health bars,
 portrait unit registration, offline/out-of-range members, nearby entities,
 empty slots, roster compaction, a new member, disbanding and no game handler.
+The optional manifest preflight rejects an old runner while a rebuild is still
+compiling or linking.
 
 To register the same command with CTest, configure
 `-DWOWEE_FRAMEXML_TEST_DATA=<extracted-WotLK-directory>` and run
@@ -28,8 +30,20 @@ asserted by the headless test.
 
 ## Automated Windows Smoke Test
 
+First prepare a separate data view. The client's startup synchronizes its own
+expansion tables into the selected Data directory, so pointing a review client
+directly at the original extraction could change it:
+
+```text
+python tools/prepare_review_data.py --source <original-Data-root> --destination <new-private-Data-root>
+```
+
+The script copies metadata and FrameXML and references the existing extracted
+models/textures through a private manifest. It does not copy accounts, saved
+credentials or realm configuration. Keep this local data view out of uploads.
+
 ```powershell
-pwsh -NoProfile -File tools/smoke_review.ps1 -Executable <review>/wowee.exe -Data <data-root> -Output <new-smoke-directory>
+pwsh -NoProfile -File tools/smoke_review.ps1 -Executable <review>/wowee.exe -Data <private-Data-root> -Output <new-smoke-directory>
 ```
 
 The script refuses to run when any WoWee process exists. It uses fresh config,

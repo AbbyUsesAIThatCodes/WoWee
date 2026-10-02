@@ -852,13 +852,19 @@ inline bool itemUseCooldown(game::GameHandler* gh, uint32_t itemId,
     return false;
 }
 
-// Find GroupMember data for a GUID (for party members out of entity range)
-inline const game::GroupMember* findPartyMember(game::GameHandler* gh, uint64_t guid) {
+// Roster identity exists before a separate party-stat packet has arrived.
+inline const game::GroupMember* findPartyRosterMember(game::GameHandler* gh, uint64_t guid) {
     if (!gh || guid == 0) return nullptr;
     for (const auto& m : gh->getPartyData().members) {
-        if (m.guid == guid && m.hasPartyStats) return &m;
+        if (m.guid == guid) return &m;
     }
     return nullptr;
+}
+
+// Stat readers still require a received snapshot; names/existence do not.
+inline const game::GroupMember* findPartyMember(game::GameHandler* gh, uint64_t guid) {
+    const auto* member = findPartyRosterMember(gh, guid);
+    return member && member->hasPartyStats ? member : nullptr;
 }
 
 /// The talent at a position in the tree, by the tab and index FrameXML counts
