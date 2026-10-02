@@ -1,22 +1,30 @@
 [
   {
     "ordinal": 1,
-    "state": "reserved",
-    "source_revision": "f64b6c75a84de59e90063aa2aac49838ab4bb2f2"
+    "state": "expected-regression-failure",
+    "source_revision": "f64b6c75a84de59e90063aa2aac49838ab4bb2f2",
+    "identity": "3.1.41_First-Campfire_pr-2_build-001_20261002T210430Z_gf64b6c75a84d_windows-x86-64-Release",
+    "built_at_utc": "2026-10-02T21:04:30.352121+00:00"
   },
   {
     "ordinal": 2,
-    "state": "reserved",
-    "source_revision": "5ae59eb2897e73953e4e08da4ed36a27fb6efe5a"
+    "state": "additional-regression-found",
+    "source_revision": "5ae59eb2897e73953e4e08da4ed36a27fb6efe5a",
+    "identity": "3.1.41_First-Campfire_pr-2_build-002_20261002T211437Z_g5ae59eb2897e_windows-x86-64-Release",
+    "built_at_utc": "2026-10-02T21:14:37.328950+00:00"
   },
   {
     "ordinal": 3,
-    "state": "reserved",
-    "source_revision": "288662cf70c17d4de3b5230632da8c753594bb4b"
+    "state": "regression-passed-smoke-staging-corrected",
+    "source_revision": "288662cf70c17d4de3b5230632da8c753594bb4b",
+    "identity": "3.1.41_First-Campfire_pr-2_build-003_20261002T212525Z_g288662cf70c1_windows-x86-64-Release",
+    "built_at_utc": "2026-10-02T21:25:25.975114+00:00"
   },
   {
     "ordinal": 4,
-    "state": "reserved",
-    "source_revision": "b477f7e0d12175ff98879fd9e78edeecf5968fd1"
+    "state": "review-ready-manual-ingame-qa-pending",
+    "source_revision": "b477f7e0d12175ff98879fd9e78edeecf5968fd1",
+    "identity": "3.1.41_First-Campfire_pr-2_build-004_20261002T213145Z_gb477f7e0d121_windows-x86-64-Release",
+    "built_at_utc": "2026-10-02T21:31:45.275554+00:00"
   }
 ]
