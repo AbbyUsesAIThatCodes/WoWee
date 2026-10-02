@@ -41,6 +41,9 @@ python tools/prepare_review_data.py --source <original-Data-root> --destination 
 The script copies metadata and FrameXML and references the existing extracted
 models/textures through a private manifest. It does not copy accounts, saved
 credentials or realm configuration. Keep this local data view out of uploads.
+Four asset directories are linked for the startup inventory's direct checks.
+The review client uses them for reads; do not run extraction or import tools
+against this view. Its tables, FrameXML, config and logs are separate copies.
 
 ```powershell
 pwsh -NoProfile -File tools/smoke_review.ps1 -Executable <review>/wowee.exe -Data <private-Data-root> -Output <new-smoke-directory>

@@ -8,6 +8,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+import subprocess
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--source", type=Path, required=True)
@@ -38,5 +39,12 @@ for expansion in (source / "expansions").iterdir():
         asset = expansion / relative
         if asset.is_dir():
             shutil.copytree(asset, target / relative)
+    if os.name == "nt":
+        subprocess.run(["pwsh", "-NoProfile", "-File",
+                        str(Path(__file__).with_name("link_review_assets.ps1")),
+                        "-Source", str(expansion), "-Destination", str(target)], check=True)
+    else:
+        for name in ("dbfilesclient", "world", "character", "creature"):
+            (target / name).symlink_to(expansion / name, target_is_directory=True)
 print(f"Private review data: {destination}")
 print("Existing extracted assets are referenced for reads; config/tables are private.")
