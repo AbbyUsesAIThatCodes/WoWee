@@ -420,10 +420,19 @@ void AuthScreen::render(auth::AuthHandler& authHandler) {
     {
         ui_.setLayer(PaperLayer::Overlay);
         const float size = ui_.px(kSmallSize);
-        const ImVec2 at(ui_.px(14), screen.y - ui_.lineHeight(size) - ui_.px(8));
-        ui_.text(ImVec2(at.x + 1.0f, at.y + 1.0f), core::kVersionString, size,
-                 IM_COL32(0, 0, 0, 150));
-        ui_.text(at, core::kVersionString, size, IM_COL32(0xEC, 0xE2, 0xCC, 0xC8));
+        const float width = screen.x - ui_.px(28);
+        const float height = ui_.wrappedHeight(width, core::kVersionString, size);
+        const ImVec2 at(ui_.px(14), screen.y - height - ui_.px(8));
+        ui_.wrapped(ImVec2(at.x + 1.0f, at.y + 1.0f), width,
+                    core::kVersionString, size, IM_COL32(0, 0, 0, 150));
+        ui_.wrapped(at, width, core::kVersionString, size,
+                    IM_COL32(0xEC, 0xE2, 0xCC, 0xC8));
+        if (core::kIsReviewBuild && ImGui::IsMouseHoveringRect(
+                at, ImVec2(at.x + width, at.y + height))) {
+            ImGui::SetTooltip("Click to Copy Build Identity");
+            if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+                ImGui::SetClipboardText(core::kVersionString);
+        }
 
         // And beside it, if GitHub has a newer one. Next to the version
         // rather than in the card: it is about the program, not about
@@ -431,7 +440,8 @@ void AuthScreen::render(auth::AuthHandler& authHandler) {
         // already. Nothing is downloaded - clicking it opens the release
         // page and the player decides from there.
         const core::UpdateCheck& updates = core::Application::getInstance().getUpdateCheck();
-        if (const std::string newer = updates.newerVersion(); !newer.empty()) {
+        if (const std::string newer = updates.newerVersion();
+            !core::kIsReviewBuild && !newer.empty()) {
             const std::string note = "  -  " + newer + " is available";
             const ImVec2 beside(at.x + ui_.textWidth(core::kVersionString, size), at.y);
             ui_.text(ImVec2(beside.x + 1.0f, beside.y + 1.0f), note.c_str(), size,

@@ -70,6 +70,7 @@
 #include "game/game_services.hpp"
 #include "game/character.hpp"
 #include "game/spell_handler.hpp"
+#include "party_frame_regression.hpp"
 
 #include <imgui.h>
 
@@ -408,6 +409,7 @@ int main(int argc, char** argv) {
     relayout();
 
     int raised = 0;
+    wowee::game::GameHandler* fixtureGame = nullptr;
     for (int i = 2; i < argc; ++i) {
         const size_t before = errors.size();
         std::printf("\n== %s\n", argv[i]);
@@ -442,6 +444,7 @@ int main(int argc, char** argv) {
             // rather than the empty they give with no assets behind them.
             if (haveAssets) svc.assetManager = &assets;
             static wowee::game::GameHandler gh(svc);
+            fixtureGame = &gh;
             constexpr uint64_t kGuid = 0x0000000000000001ull;
             gh.setPlayerGuid(kGuid);
             // Through the character list, because that is where the client
@@ -549,6 +552,15 @@ int main(int argc, char** argv) {
                         static_cast<unsigned>(gh.getPlayerRace()),
                         static_cast<unsigned>(gh.getPlayerClass()),
                         static_cast<unsigned>(ch.level));
+            continue;
+        }
+        if (std::strcmp(argv[i], "--party-regression") == 0) {
+            if (!fixtureGame || !runPartyFrameRegression(mgr, *fixtureGame) ||
+                errors.size() != before) {
+                ++raised;
+                for (size_t k = before; k < errors.size(); ++k)
+                    std::printf("   %s\n", errors[k].c_str());
+            }
             continue;
         }
         // --hit:X,Y says which frame the client's own hit test lands on.

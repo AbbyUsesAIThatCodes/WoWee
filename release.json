@@ -1,0 +1,7 @@
+{
+  "version": "3.1.41",
+  "codename": "First Campfire",
+  "codename_slug": "First-Campfire",
+  "status": "development",
+  "upstream_base": "60af39c959ae9aea41f4af47998b8def7a901e73"
+}

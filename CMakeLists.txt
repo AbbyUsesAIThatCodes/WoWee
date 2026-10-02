@@ -1293,10 +1293,12 @@ endif()
 # script rewrites the header only when the version changed), so tagging a release
 # is enough to update the version shown in the client.
 set(WOWEE_VERSION_HEADER ${CMAKE_BINARY_DIR}/generated/core/version.hpp)
+set(WOWEE_REVIEW_METADATA "" CACHE FILEPATH "Immutable review identity.cmake")
 set(WOWEE_VERSION_SCRIPT_ARGS
     -DSRC_DIR=${CMAKE_SOURCE_DIR}
     -DIN_FILE=${CMAKE_SOURCE_DIR}/include/core/version.hpp.in
     -DOUT_FILE=${WOWEE_VERSION_HEADER}
+    -DREVIEW_METADATA=${WOWEE_REVIEW_METADATA}
     -P ${CMAKE_SOURCE_DIR}/cmake/GitVersion.cmake
 )
 # Once now, so the header exists before the first compile.
