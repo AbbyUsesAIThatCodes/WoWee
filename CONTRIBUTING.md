@@ -2,6 +2,8 @@
 
 ## Build Setup
 
+Fork review artifacts follow [Build Identity](docs/BUILD_IDENTITY.md).
+
 See [BUILD_INSTRUCTIONS.md](BUILD_INSTRUCTIONS.md) for full platform-specific details.
 The short version: CMake on Linux/macOS, MSYS2 on Windows. The desktop build needs
 SDL3 and a Vulkan 1.3 driver.

@@ -41,6 +41,16 @@ endif()
 # Date only, no clock time: a timestamp would differ on every build and force a
 # recompile of everything including this header.
 string(TIMESTAMP WOWEE_BUILD_DATE "%Y-%m-%d" UTC)
+set(WOWEE_BUILD_ID "${WOWEE_GIT_VERSION} (built ${WOWEE_BUILD_DATE})")
+set(WOWEE_IS_REVIEW false)
+if(REVIEW_METADATA)
+    if(NOT EXISTS "${REVIEW_METADATA}")
+        message(FATAL_ERROR "Review metadata does not exist: ${REVIEW_METADATA}")
+    endif()
+    include("${REVIEW_METADATA}")
+    set(WOWEE_IS_REVIEW true)
+    message(STATUS "Review Build: ${WOWEE_BUILD_ID}")
+endif()
 
 configure_file(${IN_FILE} ${OUT_FILE}.tmp @ONLY)
 
