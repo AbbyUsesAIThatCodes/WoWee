@@ -1,13 +1,4 @@
 # Unit test infrastructure using Catch2 v3 (amalgamated)
-set(WOWEE_FRAMEXML_TEST_DATA "" CACHE PATH "Extracted WotLK data for party regression")
-if(TARGET framexml_run AND WOWEE_FRAMEXML_TEST_DATA)
-    find_package(Python3 COMPONENTS Interpreter REQUIRED)
-    add_test(NAME party_frames COMMAND ${Python3_EXECUTABLE}
-        ${CMAKE_SOURCE_DIR}/tools/test_party_frames.py
-        --runner $<TARGET_FILE:framexml_run>
-        --data ${WOWEE_FRAMEXML_TEST_DATA}
-        --output ${CMAKE_BINARY_DIR}/party-regression)
-endif()
 
 # Catch2 amalgamated as a library target
 add_library(catch2_main STATIC

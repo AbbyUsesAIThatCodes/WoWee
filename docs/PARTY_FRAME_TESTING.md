@@ -70,6 +70,11 @@ are absent. `SetPortraitTexture` registers party1-party4 in `WidgetTree`;
 GPU textures when appearance data is available.
 
 The confirmed visibility blocker is the always-false `GetPartyMember` stub.
+The integration test also exposed a second dependency: `UnitName` and
+`UnitExists` used a helper that required a stats packet even though roster
+identity is already known. They now use roster membership; health and other
+stat readers keep their received-stats guard. The regression verifies both the
+roster-only phase and subsequent `UNIT_HEALTH` updates.
 The existing party-token and portrait mapping both use the first four other
 roster members, while `GetNumPartyMembers` filters the local raid subgroup.
 That broader raid-subgroup inconsistency is deferred; this focused party

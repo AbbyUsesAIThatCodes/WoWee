@@ -1747,6 +1747,23 @@ if(WOWEE_BUILD_FRAMEXML_RUN)
     if(TARGET opcodes-generate)
         add_dependencies(framexml_run opcodes-generate)
     endif()
+    # Register here: tests/ is processed before framexml_run exists.
+    set(WOWEE_FRAMEXML_TEST_DATA "" CACHE PATH "Extracted WotLK data for party regression")
+    if(WOWEE_BUILD_TESTS AND WOWEE_FRAMEXML_TEST_DATA)
+        find_package(Python3 COMPONENTS Interpreter REQUIRED)
+        set(_party_manifest_args)
+        if(WOWEE_REVIEW_METADATA)
+            get_filename_component(_identity_dir "${WOWEE_REVIEW_METADATA}" DIRECTORY)
+            list(APPEND _party_manifest_args --manifest "${_identity_dir}/build-manifest.json")
+        endif()
+        add_test(NAME party_frames COMMAND ${Python3_EXECUTABLE}
+            ${CMAKE_SOURCE_DIR}/tools/test_party_frames.py
+            --runner $<TARGET_FILE:framexml_run>
+            --data ${WOWEE_FRAMEXML_TEST_DATA}
+            --output ${CMAKE_BINARY_DIR}/party-regression ${_party_manifest_args})
+        add_test(NAME review_identity COMMAND ${Python3_EXECUTABLE}
+            ${CMAKE_SOURCE_DIR}/tools/test_review_identity.py)
+    endif()
 endif()
 
 
